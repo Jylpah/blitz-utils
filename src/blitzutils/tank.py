@@ -218,7 +218,7 @@ class Tank(JSONExportable, JSONImportable, \
 	tank_id 	: int						= Field(default=..., alias='_id')
 	name 		: str | None				= Field(default=None, alias='n')
 	nation		: EnumNation | None 		= Field(default=None, alias='c')
-	type		: EnumVehicleTypeInt | None	= Field(default=None, alias='v')
+	type		: EnumVehicleType | None	= Field(default=None, alias='v')
 	tier		: EnumVehicleTier | None 	= Field(default=None, alias='t')
 	is_premium 	: bool 						= Field(default=False, alias='p')
 	next_tanks	: list[int] | None			= Field(default=None, alias='s')
