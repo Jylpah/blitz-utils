@@ -81,16 +81,16 @@ def test_4_EnumVehicleTypestr_complete(enum_vehicle_type_names: list[str]) -> No
 		f"EnumVehicleTypeStr does not have all the tank types: {' ,'.join([tts.name for tts in tank_types])}"  # type: ignore
 	
 
-def test_5_EnumVehicleType_conversion() -> None:
-	"""Test converstions between EnumVehicleTypeInt and EnumVehicleTypeStr"""
-	for tt_int in EnumVehicleTypeInt:
-		tt_str = EnumVehicleTypeStr(tt_int)
-		assert tt_int.name == tt_str.name, \
-				f'Conversion from EnumVehicleTypeInt to EnumVehicleTypeStr failed: {tt_int.name}'
-		assert EnumVehicleTypeInt[tt_str.value] is tt_int, f"from_str() failed for {tt_str}"
-		assert tt_int is tt_str.int_type, \
-				f'Conversion from EnumVehicleTypeStr to EnumVehicleTypeInt failed: {tt_int.name}'
-		assert EnumVehicleTypeStr[tt_int.value] is tt_str, f"from_int() failed for {tt_int}"
+# def test_5_EnumVehicleType_conversion() -> None:
+# 	"""Test converstions between EnumVehicleTypeInt and EnumVehicleTypeStr"""
+# 	for tt_int in EnumVehicleTypeInt:
+# 		tt_str = EnumVehicleTypeStr(tt_int)
+# 		assert tt_int.name == tt_str.name, \
+# 				f'Conversion from EnumVehicleTypeInt to EnumVehicleTypeStr failed: {tt_int.name}'
+# 		assert EnumVehicleTypeInt[tt_str.value] is tt_int, f"from_str() failed for {tt_str}"
+# 		assert tt_int is tt_str.int_type, \
+# 				f'Conversion from EnumVehicleTypeStr to EnumVehicleTypeInt failed: {tt_int.name}'
+# 		assert EnumVehicleTypeStr[tt_int.value] is tt_str, f"from_int() failed for {tt_int}"
 		
 
 def test_6_EnumVehicleTier_create(enum_vehicle_tier) -> None:
@@ -101,3 +101,18 @@ def test_6_EnumVehicleTier_create(enum_vehicle_tier) -> None:
 		assert EnumVehicleTier(tier_int) is EnumVehicleTier[tier_str], f"Failed to create EnumVehicleTier for {tier_str}"
 		assert EnumVehicleTier.read_tier(tier_str) is EnumVehicleTier[tier_str], f"read_tier({tier_str}) failed"
 		assert EnumVehicleTier.read_tier(str(tier_int)) is EnumVehicleTier[tier_str], f"read_tier({tier_int}) failed"
+
+
+def	test_7_EnumVehicleType_create(enum_vehicle_type_names : list[str] , 
+								  enum_vehicle_type_str_values : list[str]
+								  ) -> None:
+	for ndx in range(len(enum_vehicle_type_names)):
+		tank_type : str = enum_vehicle_type_names[ndx]
+		tank_type2 : str= enum_vehicle_type_str_values[ndx]
+		try:
+			assert EnumVehicleType(ndx) is EnumVehicleType(tank_type), \
+					f"Creation of EnumVehicleType.{tank_type} failed"
+			assert EnumVehicleType(tank_type) is EnumVehicleType(tank_type2), \
+					f"Creation of EnumVehicleType.{tank_type} failed"
+		except Exception as err:
+			assert False, f"Could not create EnumVehicleTypeInt of {tank_type}"

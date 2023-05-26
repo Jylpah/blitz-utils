@@ -1,9 +1,9 @@
 import logging
 import json
 from warnings import warn
-from typing import Any, Optional
-from enum import IntEnum, StrEnum
-from aenum import Enum as AEnum, MultiValue 	# type: ignore
+from typing import Any, Optional, Self
+from enum import IntEnum, StrEnum, Enum, EnumType
+# from aenum import Enum as AEnum, MultiValue 	# type: ignore
 from pydantic import root_validator, validator, Field, Extra
 
 from pyutils import CSVExportable, TXTExportable,  JSONExportable, \
@@ -18,21 +18,70 @@ verbose	= logger.info
 debug	= logger.debug
 
 
-class EnumVehicleType(AEnum):
-	""""Advanced Enum class to combine EnumVehicleTypeInt and 
-		EnumVehicleTypeStr. 
-		use vehicle_type.value to get int value
-		use vehicle_type.fullname to get str value"""
-	_init_ = 'value fullname'
-	_settings_ = MultiValue
+# class EnumVehicleType(AEnum):
+# 	""""Advanced Enum class to combine EnumVehicleTypeInt and 
+# 		EnumVehicleTypeStr. 
+# 		use vehicle_type.value to get int value
+# 		use vehicle_type.fullname to get str value"""
+# 	_init_ = 'value fullname'
+# 	_settings_ = MultiValue
 	
-	light_tank		= 0, 'lightTank'
-	medium_tank		= 1, 'mediumTank'
-	heavy_tank		= 2, 'heavyTank'
-	tank_desroyer	= 3, 'AT-SPG'
+# 	light_tank		= 0, 'lightTank'
+# 	medium_tank		= 1, 'mediumTank'
+# 	heavy_tank		= 2, 'heavyTank'
+# 	tank_destroyer	= 3, 'AT-SPG'
+
+# 	def __str__(self) -> str:
+# 		return f'{self.name}'.replace('_', ' ').capitalize()
+
+# #* mypy raises error: 
+## "Type[EnumVehicleType]" has no attribute "__iter__" (not iterable)  [attr-defined]
+# for vt in EnumVehicleType:
+# 	print(vt.name)
+
+
+class EnumVehicleType(int, Enum):
+	
+	__alias_map__ : dict[str, str] = dict()
+
+	light_tank		= (0, 'lightTank')
+	medium_tank		= (1, 'mediumTank')
+	heavy_tank		= (2, 'heavyTank')
+	tank_destroyer	= (3, 'AT-SPG')
+
+	def __init__(self, *values) -> None:
+		self._api_name : str
+		self.__alias_map__[self.api_name] = self.name
+		self.__alias_map__[self.name] = self.name
+		
+
+	@classmethod
+	# def __new__(cls, enum_type: type[Self], value: int, api_name: str):
+	def __new__(cls, enum_type: type[Self], *values):
+		value: int = int(values[0])
+		api_name : str = str(values[1])
+		obj = int.__new__(cls, value)
+		obj._value_ = value
+		obj._api_name = api_name
+		return obj
+
+
+	@classmethod
+	def _missing_(cls, value: object):
+		if isinstance(value, str):
+			item_name : str = cls.__alias_map__[value]
+			return cls[item_name]
+		return super()._missing_(value)
+
+
+	@property
+	def api_name(self) -> str:
+		return self._api_name
+	
 
 	def __str__(self) -> str:
 		return f'{self.name}'.replace('_', ' ').capitalize()
+
 
 
 class EnumVehicleTypeInt(IntEnum):
@@ -41,23 +90,38 @@ class EnumVehicleTypeInt(IntEnum):
 	heavy_tank 	= 2
 	tank_destroyer = 3
 
+
+	@classmethod
+	def _missing_(cls, value: object):
+		if isinstance(value, EnumVehicleTypeStr):
+			return cls[value.name]
+		elif isinstance(value, str):
+			return cls[EnumVehicleTypeStr(value).name]
+		return super()._missing_(value)
+
+
 	def __str__(self) -> str:
 		return f'{self.name}'.replace('_', ' ').capitalize()
 
+
 	## DEPRECIATED ############################
 	def as_str(self) -> 'EnumVehicleTypeStr':
-		warn("This method will deprecated in favor of 'str_type' property; version=0.2.0", 
+		warn("This method will deprecated; version=0.2.0", 
 			DeprecationWarning, stacklevel=2)
 		return EnumVehicleTypeStr[self.name]
 
-
+	## DEPRECIATED ############################
 	@property
 	def str_type(self) -> 'EnumVehicleTypeStr':
+		warn("This method will deprecated; version=0.2.0", 
+			DeprecationWarning, stacklevel=2)
 		return EnumVehicleTypeStr[self.name]
 
-
+	## DEPRECIATED ############################
 	@classmethod
 	def from_str(cls, t: str) -> 'EnumVehicleTypeInt':
+		warn("This method will deprecated; version=0.2.0", 
+			DeprecationWarning, stacklevel=2)
 		return EnumVehicleTypeStr(t).int_type
 
 
@@ -67,23 +131,38 @@ class EnumVehicleTypeStr(StrEnum):
 	heavy_tank 		= 'heavyTank'
 	tank_destroyer	= 'AT-SPG'
 
+
+	@classmethod
+	def _missing_(cls, value: object):
+		"""Make possible to """
+		if isinstance(value, EnumVehicleTypeInt):
+			return cls[value.name]
+		elif isinstance(value, int):
+			return cls[EnumVehicleTypeInt(value).name]
+		return super()._missing_(value)
+
+
 	def __str__(self) -> str:
 		return f'{self.name}'.replace('_', ' ').capitalize()
 
-
+	## DEPRECIATED ############################
 	@property
 	def int_type(self) -> 'EnumVehicleTypeInt':
+		warn("This method will deprecated; version=0.2.0", 
+			DeprecationWarning, stacklevel=2)
 		return EnumVehicleTypeInt[self.name]
 	
 	## DEPRECIATED ############################
 	def as_int(self) -> EnumVehicleTypeInt:
-		warn("This method will deprecated in favor of 'int_type' property; version=0.2.0", 
+		warn("This method will deprecated; version=0.2.0", 
 			DeprecationWarning, stacklevel=2)
 		return EnumVehicleTypeInt[self.name]
 
-
+	## DEPRECIATED ############################
 	@classmethod
 	def from_int(cls, t: int) -> 'EnumVehicleTypeStr':
+		warn("This method will deprecated; version=0.2.0", 
+			DeprecationWarning, stacklevel=2)
 		return EnumVehicleTypeInt(t).str_type
 
 
