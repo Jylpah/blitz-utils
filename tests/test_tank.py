@@ -6,7 +6,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.resolve() / 'src'))
 
 from blitzutils import Tank, WGTank, EnumNation, EnumVehicleTier, \
-						EnumVehicleTypeInt, EnumVehicleTypeStr
+						EnumVehicleTypeInt, EnumVehicleTypeStr, EnumVehicleType
 
 
 ########################################################
@@ -84,13 +84,13 @@ def test_4_EnumVehicleTypestr_complete(enum_vehicle_type_names: list[str]) -> No
 def test_5_EnumVehicleType_conversion() -> None:
 	"""Test converstions between EnumVehicleTypeInt and EnumVehicleTypeStr"""
 	for tt_int in EnumVehicleTypeInt:
-		tt_str : EnumVehicleTypeStr = tt_int.str_type
+		tt_str = EnumVehicleTypeStr(tt_int)
 		assert tt_int.name == tt_str.name, \
 				f'Conversion from EnumVehicleTypeInt to EnumVehicleTypeStr failed: {tt_int.name}'
-		assert EnumVehicleTypeInt.from_str(tt_str.value) is tt_int, f"from_str() failed for {tt_str}"
+		assert EnumVehicleTypeInt[tt_str.value] is tt_int, f"from_str() failed for {tt_str}"
 		assert tt_int is tt_str.int_type, \
 				f'Conversion from EnumVehicleTypeStr to EnumVehicleTypeInt failed: {tt_int.name}'
-		assert EnumVehicleTypeStr.from_int(tt_int.value) is tt_str, f"from_int() failed for {tt_int}"
+		assert EnumVehicleTypeStr[tt_int.value] is tt_str, f"from_int() failed for {tt_int}"
 		
 
 def test_6_EnumVehicleTier_create(enum_vehicle_tier) -> None:

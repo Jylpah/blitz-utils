@@ -9,7 +9,7 @@ from pydantic import BaseModel, Extra, root_validator, validator, Field, HttpUrl
 from pyutils import JSONExportable, JSONImportable, Idx, BackendIndexType
 from pyutils.exportable import	DESCENDING, ASCENDING, TEXT
 
-from .tank 		import EnumVehicleTypeInt
+from .tank import EnumVehicleTypeInt, EnumVehicleType
 
 logger = logging.getLogger()
 error 	= logger.error
@@ -157,7 +157,7 @@ class WoTBlitzReplaySummary(BaseModel):
 	map_name		: str			= Field(default=..., alias='mn')
 	vehicle			: str			= Field(default=..., alias='v')
 	vehicle_tier	: int | None	= Field(default=..., alias='vx')
-	vehicle_type 	: EnumVehicleTypeInt | None = Field(default=..., alias='vt')
+	vehicle_type 	: EnumVehicleType | None = Field(default=..., alias='vt')
 	credits_total	: int | None 	= Field(default=None, alias='ct')
 	credits_base	: int | None 	= Field(default=None, alias='cb')
 	exp_base		: int | None	= Field(default=None, alias='eb')

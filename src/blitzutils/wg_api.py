@@ -10,7 +10,7 @@ from pyutils.utils 		import epoch_now
 from pyutils.exportable import	DESCENDING, ASCENDING, TEXT
 
 from .region 	import Region
-from .tank 		import WGTank
+from .tank 		import Tank
 
 TYPE_CHECKING = True
 logger = logging.getLogger()
@@ -485,7 +485,7 @@ class WGApiWoTBlitzPlayerAchievements(WGApiWoTBlitz):
 
 
 class WGApiTankopedia(WGApiWoTBlitz):
-	data 	: dict[str, WGTank] | None = Field(default=None, alias='d')
+	data 	: dict[str, Tank] | None = Field(default=None, alias='d')
 	userStr	: dict[str, str] | None  = Field(default=None, alias='s')
 
 	_exclude_export_DB_fields : ClassVar[Optional[TypeExcludeDict]] = {	'userStr': True }
