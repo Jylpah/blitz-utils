@@ -26,7 +26,7 @@ def enum_vehicle_type_names() -> list[str]:
 	return [ 'light_tank', 'medium_tank', 'heavy_tank', 'tank_destroyer' ]
 
 @pytest.fixture
-def enum_vehicle_type_str_values() -> list[str]:
+def enum_vehicle_type_api_names() -> list[str]:
 	return [ 'lightTank', 'mediumTank', 'heavyTank', 'AT-SPG' ]
 
 @pytest.fixture
@@ -59,11 +59,11 @@ def test_2_EnumVehicleTypeInt_complete(enum_vehicle_type_names: list[str]) -> No
 
 
 def test_3_EnumVehicleTypeStr_create(enum_vehicle_type_names : list[str] , 
-									 enum_vehicle_type_str_values : list[str]
+									 enum_vehicle_type_api_names : list[str]
 									 ) -> None:
 	for ndx in range(len(enum_vehicle_type_names)):
 		name 	: str = enum_vehicle_type_names[ndx]
-		value 	: str = enum_vehicle_type_str_values[ndx]
+		value 	: str = enum_vehicle_type_api_names[ndx]
 		try:
 			assert EnumVehicleTypeStr(value) is EnumVehicleTypeStr[name], \
 					f"Creation of EnumVehicleTypeStr.{name} failed"
@@ -104,15 +104,25 @@ def test_6_EnumVehicleTier_create(enum_vehicle_tier) -> None:
 
 
 def	test_7_EnumVehicleType_create(enum_vehicle_type_names : list[str] , 
-								  enum_vehicle_type_str_values : list[str]
+								  enum_vehicle_type_api_names : list[str]
 								  ) -> None:
 	for ndx in range(len(enum_vehicle_type_names)):
 		tank_type : str = enum_vehicle_type_names[ndx]
-		tank_type2 : str= enum_vehicle_type_str_values[ndx]
+		api_name: str= enum_vehicle_type_api_names[ndx]
 		try:
 			assert EnumVehicleType(ndx) is EnumVehicleType(tank_type), \
 					f"Creation of EnumVehicleType.{tank_type} failed"
-			assert EnumVehicleType(tank_type) is EnumVehicleType(tank_type2), \
+			assert EnumVehicleType(tank_type) is EnumVehicleType(api_name), \
 					f"Creation of EnumVehicleType.{tank_type} failed"
 		except Exception as err:
 			assert False, f"Could not create EnumVehicleTypeInt of {tank_type}"
+
+
+def test_8_EnumVehicleType_complete(enum_vehicle_type_names: list[str]) -> None:
+	tank_types = set(EnumVehicleType)
+	assert len(tank_types) == len(enum_vehicle_type_names), \
+			f"EnumVehicleTypeInt has wrong number of tank types"
+	for tank_type in enum_vehicle_type_names:
+		tank_types.remove(EnumVehicleType[tank_type])
+	assert len(tank_types) == 0, \
+		f"EnumVehicleTypeInt does not have all the tank types: {' ,'.join([tti.name for tti in tank_types])}"
